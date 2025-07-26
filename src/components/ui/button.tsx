@@ -9,18 +9,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90 lite-neon-primary",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90 lite-neon-red",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground lite-neon-outline",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 lite-neon-secondary",
+        ghost: "hover:bg-accent hover:text-accent-foreground lite-neon-ghost",
         link: "text-primary underline-offset-4 hover:underline",
-        hero: "glow-button bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold transform hover:scale-105",
-        glass: "glass-card border-primary/20 text-foreground hover:bg-primary/10 hover:border-primary/40",
-        gradient: "bg-gradient-to-r from-primary via-secondary to-accent text-primary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1",
+        hero: "glow-button bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold transform hover:scale-105 lite-neon-hero",
+        glass: "glass-card border-primary/20 text-foreground hover:bg-primary/10 hover:border-primary/40 lite-neon-glass",
+        gradient: "bg-gradient-to-r from-primary via-secondary to-accent text-primary-foreground font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 lite-neon-gradient",
       },
       size: {
         default: "h-10 px-4 py-2",

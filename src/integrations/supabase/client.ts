@@ -1,1 +1,1 @@
-// Supabase client removed
+// Supabase client removed 

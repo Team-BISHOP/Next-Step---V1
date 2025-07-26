@@ -144,6 +144,15 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+  }
+  
+  .gradient-text-animated {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-size: 200% 200%;
   }
   
   .animate-float {
@@ -203,4 +212,120 @@
 
 .animate-fadeInUp {
   animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Lite Neon Reflection Effects */
+.lite-neon-primary {
+  box-shadow: 0 0 10px hsla(262, 83%, 58%, 0.2);
+  transition: all 0.3s ease;
+}
+
+.lite-neon-primary:hover {
+  box-shadow: 
+    0 0 15px hsla(262, 83%, 58%, 0.4),
+    0 0 25px hsla(262, 83%, 58%, 0.2);
+  text-shadow: 0 0 8px hsla(262, 83%, 58%, 0.3);
+}
+
+.lite-neon-secondary {
+  box-shadow: 0 0 8px hsla(217, 91%, 60%, 0.15);
+  transition: all 0.3s ease;
+}
+
+.lite-neon-secondary:hover {
+  box-shadow: 
+    0 0 12px hsla(217, 91%, 60%, 0.3),
+    0 0 20px hsla(217, 91%, 60%, 0.15);
+}
+
+.lite-neon-outline {
+  transition: all 0.3s ease;
+}
+
+.lite-neon-outline:hover {
+  box-shadow: 
+    0 0 8px hsla(262, 83%, 58%, 0.2),
+    inset 0 0 8px hsla(262, 83%, 58%, 0.1);
+  border-color: hsla(262, 83%, 58%, 0.4);
+}
+
+.lite-neon-ghost:hover {
+  box-shadow: 0 0 8px hsla(198, 93%, 60%, 0.2);
+  text-shadow: 0 0 6px hsla(198, 93%, 60%, 0.3);
+}
+
+.lite-neon-hero {
+  box-shadow: 
+    0 0 15px hsla(262, 83%, 58%, 0.2),
+    0 0 25px hsla(217, 91%, 60%, 0.1);
+}
+
+.lite-neon-hero:hover {
+  box-shadow: 
+    0 0 20px hsla(262, 83%, 58%, 0.4),
+    0 0 35px hsla(217, 91%, 60%, 0.2),
+    0 0 45px hsla(198, 93%, 60%, 0.1);
+}
+
+.lite-neon-glass {
+  transition: all 0.3s ease;
+}
+
+.lite-neon-glass:hover {
+  box-shadow: 
+    0 0 12px hsla(262, 83%, 58%, 0.2),
+    inset 0 0 12px hsla(262, 83%, 58%, 0.05);
+}
+
+.lite-neon-gradient {
+  box-shadow: 
+    0 0 12px hsla(262, 83%, 58%, 0.2),
+    0 0 20px hsla(217, 91%, 60%, 0.1);
+}
+
+.lite-neon-gradient:hover {
+  box-shadow: 
+    0 0 18px hsla(262, 83%, 58%, 0.3),
+    0 0 30px hsla(217, 91%, 60%, 0.2),
+    0 0 40px hsla(198, 93%, 60%, 0.1);
+}
+
+.lite-neon-red {
+  box-shadow: 0 0 8px hsla(0, 84%, 60%, 0.15);
+  transition: all 0.3s ease;
+}
+
+.lite-neon-red:hover {
+  box-shadow: 
+    0 0 12px hsla(0, 84%, 60%, 0.3),
+    0 0 20px hsla(0, 84%, 60%, 0.15);
+}
+
+/* Letter Animation Durations */
+.duration-800 {
+  transition-duration: 0.8s;
+}
+
+.duration-600 {
+  transition-duration: 0.6s;
+}
+
+.duration-1000 {
+  transition-duration: 1s;
+}
+
+/* Letter Animation Keyframes */
+@keyframes letterSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-letter-slide {
+  animation: letterSlideUp 0.8s ease-out forwards;
 }

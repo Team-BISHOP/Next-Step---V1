@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Target, TrendingUp } from "lucide-react";
 import heroBg from "@/assets/hero-bg.jpg";
+import AnimatedText from "./AnimatedText";
 
 const HeroSection = () => {
   const stats = [
@@ -38,8 +39,22 @@ const HeroSection = () => {
             </div>
             
             <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-              Discover Your
-              <span className="block gradient-text animate-glow">Perfect ICT Career</span>
+              <AnimatedText 
+                text="Discover Your" 
+                delay={500}
+                staggerDelay={0.1}
+                duration={1.0}
+                animationType="scale"
+              />
+              <div className="block">
+                <AnimatedText 
+                  text="Perfect ICT Career" 
+                  delay={1200}
+                  staggerDelay={0.08}
+                  duration={1.2}
+                  animationType="glow"
+                />
+              </div>
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">

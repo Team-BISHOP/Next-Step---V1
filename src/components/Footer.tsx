@@ -28,18 +28,18 @@ const Footer = () => {
       { name: "Success Stories", href: "#" }
     ],
     company: [
-      { name: "About Us", href: "#" },
-      { name: "Our Team", href: "#" },
-      { name: "Partners", href: "#" },
-      { name: "Careers", href: "#" },
-      { name: "Contact", href: "#" }
+      { name: "About Us", href: "/about" },
+      { name: "Our Team", href: "/team" },
+      { name: "Partners", href: "/partners" },
+      { name: "Careers", href: "/careers" },
+      { name: "Contact", href: "/contact" }
     ],
     support: [
-      { name: "Help Center", href: "#" },
-      { name: "Documentation", href: "#" },
-      { name: "Privacy Policy", href: "#" },
-      { name: "Terms of Service", href: "#" },
-      { name: "FAQ", href: "#" }
+      { name: "Help Center", href: "/help" },
+      { name: "Documentation", href: "/docs" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Service", href: "/terms" },
+      { name: "FAQ", href: "/faq" }
     ]
   };
 
@@ -206,10 +206,10 @@ const Footer = () => {
             </div>
             
             <div className="flex items-center space-x-6 text-sm">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <a href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
               </a>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">

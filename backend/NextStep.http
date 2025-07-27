@@ -1,0 +1,61 @@
+### Variables
+@baseUrl = https://localhost:7010/api
+@token = 
+
+### Register Student
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Bruce Wayne",
+  "email": "bruce.wayne@gmail.com",
+  "password": "password123",
+  "role": "student"
+}
+
+### Register Industry Expert
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "James Bond",
+  "email": "james.bond@outlook.com",
+  "password": "password123",
+  "role": "industry_expert"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "bruce.wayne@gmail.com",
+  "password": "password123"
+}
+
+### Get My Profile
+GET {{baseUrl}}/profiles/me
+Authorization: Bearer {{token}}
+
+### Update Profile
+PUT {{baseUrl}}/profiles/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "fullName": "Bruce Wayne Updated",
+  "university": "University of Colombo",
+  "yearOfStudy": 3,
+  "major": "Computer Science",
+  "skills": ["JavaScript", "Python", "React"],
+  "careerInterests": ["Web Development", "Data Science"],
+  "githubUsername": "brucewayne",
+  "linkedinUrl": "https://linkedin.com/in/brucewayne"
+}
+
+### Get Public Profile
+GET {{baseUrl}}/profiles/1/public
+
+### Get Student Profiles (Industry Expert only)
+GET {{baseUrl}}/profiles/students?page=1&pageSize=10
+Authorization: Bearer {{token}}

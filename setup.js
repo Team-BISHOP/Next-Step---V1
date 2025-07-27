@@ -21,8 +21,11 @@ if (!fs.existsSync(envPath)) {
 console.log('📦 Installing dependencies...');
 
 try {
-  console.log('Installing frontend dependencies...');
+  console.log('Installing root dependencies...');
   execSync('npm install', { stdio: 'inherit', cwd: __dirname });
+  
+  console.log('Installing frontend dependencies...');
+  execSync('npm install', { stdio: 'inherit', cwd: path.join(__dirname, 'frontend') });
   
   console.log('Installing backend dependencies...');
   execSync('npm install', { stdio: 'inherit', cwd: path.join(__dirname, 'server') });

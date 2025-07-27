@@ -21,7 +21,7 @@ const UserAnalytics = ({ userId, skills = [], careerInterests = [], points = 0, 
 
   const fetchUserActivities = async () => {
     try {
-      // Supabase removed: fetch user activities logic should be implemented here
+      // TODO: Implement API call to fetch user activities from backend
       // For now, using empty array
       setActivities([]);
     } catch (error) {

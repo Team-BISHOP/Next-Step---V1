@@ -122,7 +122,6 @@ A comprehensive full-stack application connecting ICT students with industry pro
 │   ├── 📁 middleware/     # Express middleware
 │   ├── 📁 uploads/        # File upload directory
 │   └── server.js          # Main server file
-├── 📁 supabase/          # Database migrations (legacy)
 └── 📄 setup.js           # Project setup script
 ```
 

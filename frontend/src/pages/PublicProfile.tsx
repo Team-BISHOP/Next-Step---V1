@@ -43,7 +43,7 @@ const PublicProfile = () => {
     if (!userId) return;
     
     try {
-      // Supabase removed: fetch profile logic should be implemented here
+      // TODO: Implement API call to fetch user profile from backend
       // For now, setting profile to null to show "not found" message
       setProfile(null);
     } catch (error: any) {

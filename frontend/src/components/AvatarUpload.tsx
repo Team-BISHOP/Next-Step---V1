@@ -26,7 +26,7 @@ const AvatarUpload = ({ userId, currentAvatarUrl, onAvatarUpdate }: AvatarUpload
 
       const file = event.target.files[0];
       
-      // Supabase removed: file upload logic should be implemented here
+      // TODO: Implement file upload to backend server
       // For now, simulate successful upload
       const mockAvatarUrl = URL.createObjectURL(file);
 

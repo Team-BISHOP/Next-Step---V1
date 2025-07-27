@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import API from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,14 +82,15 @@ const Profile = () => {
     }
   }, [user]);
 
-    const fetchProfile = async () => {
+  const fetchProfile = async () => {
     if (!user) return;
     
     setIsLoading(true);
     try {
-      // Supabase removed: fetch profile logic should be implemented here
-      // For now, using empty profile object
-      setProfile({});
+      const response = await API.get('/profiles/me');
+      if (response.success) {
+        setProfile(response.data);
+      }
     } catch (error: any) {
       toast.error("Error loading profile: " + error.message);
     } finally {
@@ -96,21 +98,23 @@ const Profile = () => {
     }
   };
 
-    const updateProfile = async () => {
+  const updateProfile = async () => {
     if (!user) return;
     
     setIsSaving(true);
     try {
-      // Supabase removed: update profile logic should be implemented here
-      // For now, just simulate successful update
+      const response = await API.put('/profiles/me', profile);
       
-      toast.success("Profile updated successfully!");
-      
-      // Redirect to home page after successful save
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
-      
+      if (response.success) {
+        toast.success("Profile updated successfully!");
+        
+        // Redirect to home page after successful save
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      } else {
+        toast.error("Error updating profile: " + response.message);
+      }
     } catch (error: any) {
       toast.error("Error updating profile: " + error.message);
     } finally {

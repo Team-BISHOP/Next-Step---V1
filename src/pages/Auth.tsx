@@ -111,9 +111,8 @@ const Auth = () => {
     const { error } = await signUp(
       signupData.email, 
       signupData.password, 
-      signupData.fullName, 
       signupData.role as UserRole,
-      additionalData
+      signupData.fullName
     );
     
     if (error) {

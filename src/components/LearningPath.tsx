@@ -21,8 +21,8 @@ import {
   Zap
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import API from "@/lib/api";
 import CourseAnalytics from "./CourseAnalytics";
 import {
   ResponsiveContainer,
@@ -169,13 +169,46 @@ const LearningPath = ({ careerPath, onClose }: LearningPathProps) => {
   ];
 
   useEffect(() => {
-    setCourses(mockCourses);
-    setUserProgress([
-      { course_id: '1', progress: 40, completed: false, last_accessed: '2024-01-15', time_spent: 120 },
-      { course_id: '2', progress: 20, completed: false, last_accessed: '2024-01-10', time_spent: 60 }
-    ]);
-    setLoading(false);
-  }, [careerPath]);
+    const fetchCoursesAndProgress = async () => {
+      setLoading(true);
+      try {
+        // Fetch courses from API
+        const coursesResponse = await API.getCourses({ career_path: careerPath });
+        if (coursesResponse.success) {
+          setCourses(coursesResponse.data || mockCourses);
+        } else {
+          // Fallback to mock data if API fails
+          setCourses(mockCourses);
+        }
+
+        // Fetch user progress if logged in
+        if (user) {
+          const analyticsResponse = await API.getMyAnalytics();
+          if (analyticsResponse.success && analyticsResponse.data?.courseProgress) {
+            setUserProgress(analyticsResponse.data.courseProgress);
+          } else {
+            // Fallback to mock progress
+            setUserProgress([
+              { course_id: '1', progress: 40, completed: false, last_accessed: '2024-01-15', time_spent: 120 },
+              { course_id: '2', progress: 20, completed: false, last_accessed: '2024-01-10', time_spent: 60 }
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+        // Use mock data as fallback
+        setCourses(mockCourses);
+        setUserProgress([
+          { course_id: '1', progress: 40, completed: false, last_accessed: '2024-01-15', time_spent: 120 },
+          { course_id: '2', progress: 20, completed: false, last_accessed: '2024-01-10', time_spent: 60 }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCoursesAndProgress();
+  }, [careerPath, user]);
 
   const enrollInCourse = async (courseId: string) => {
     if (!user) {
@@ -184,45 +217,95 @@ const LearningPath = ({ careerPath, onClose }: LearningPathProps) => {
     }
 
     try {
-      // In a real app, you'd save enrollment to database
-      toast.success('Successfully enrolled in course!');
-      // Update user progress
-      setUserProgress(prev => [
-        ...prev.filter(p => p.course_id !== courseId),
-        { course_id: courseId, progress: 0, completed: false, last_accessed: new Date().toISOString(), time_spent: 0 }
-      ]);
+      const response = await API.enrollInCourse(courseId);
+      if (response.success) {
+        toast.success('Successfully enrolled in course!');
+        
+        // Update user progress locally
+        setUserProgress(prev => [
+          ...prev.filter(p => p.course_id !== courseId),
+          { 
+            course_id: courseId, 
+            progress: 0, 
+            completed: false, 
+            last_accessed: new Date().toISOString(), 
+            time_spent: 0 
+          }
+        ]);
+
+        // Log activity
+        await API.post('/analytics/activity', {
+          type: 'course_enrollment',
+          course_id: courseId,
+          metadata: { career_path: careerPath }
+        });
+      } else {
+        toast.error(response.message || 'Failed to enroll in course');
+      }
     } catch (error) {
+      console.error('Enrollment error:', error);
       toast.error('Failed to enroll in course');
     }
   };
 
-  const markModuleComplete = (courseId: string, moduleId: string) => {
-    setCourses(prev => prev.map(course => 
-      course.id === courseId 
-        ? {
-            ...course,
-            modules: course.modules.map(module =>
-              module.id === moduleId ? { ...module, completed: true } : module
-            )
-          }
-        : course
-    ));
-
-    // Update progress
-    const course = courses.find(c => c.id === courseId);
-    if (course) {
-      const completedModules = course.modules.filter(m => m.completed || m.id === moduleId).length;
-      const totalModules = course.modules.length;
-      const newProgress = Math.round((completedModules / totalModules) * 100);
-
-      setUserProgress(prev => prev.map(p => 
-        p.course_id === courseId 
-          ? { ...p, progress: newProgress, completed: newProgress === 100 }
-          : p
-      ));
+  const markModuleComplete = async (courseId: string, moduleId: string) => {
+    if (!user) {
+      toast.error('Please login to track progress');
+      return;
     }
 
-    toast.success('Module completed!');
+    try {
+      // Update UI optimistically
+      setCourses(prev => prev.map(course => 
+        course.id === courseId 
+          ? {
+              ...course,
+              modules: course.modules.map(module =>
+                module.id === moduleId ? { ...module, completed: true } : module
+              )
+            }
+          : course
+      ));
+
+      // Calculate new progress
+      const course = courses.find(c => c.id === courseId);
+      if (course) {
+        const completedModules = course.modules.filter(m => m.completed || m.id === moduleId).length;
+        const totalModules = course.modules.length;
+        const newProgress = Math.round((completedModules / totalModules) * 100);
+
+        // Update progress locally
+        setUserProgress(prev => prev.map(p => 
+          p.course_id === courseId 
+            ? { ...p, progress: newProgress, completed: newProgress === 100, last_accessed: new Date().toISOString() }
+            : p
+        ));
+
+        // Log activity to backend
+        await API.post('/analytics/activity', {
+          type: 'module_completion',
+          course_id: courseId,
+          module_id: moduleId,
+          metadata: { 
+            progress: newProgress,
+            career_path: careerPath,
+            completed: newProgress === 100
+          }
+        });
+
+        // Check for achievements
+        await API.post('/achievements/check', {
+          type: 'course_progress',
+          course_id: courseId,
+          progress: newProgress
+        });
+
+        toast.success(newProgress === 100 ? 'Course completed! 🎉' : 'Module completed!');
+      }
+    } catch (error) {
+      console.error('Error marking module complete:', error);
+      toast.error('Failed to update progress');
+    }
   };
 
   const getCourseProgress = (courseId: string) => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Code, 
   Shield, 
@@ -14,9 +15,13 @@ import {
   Star
 } from "lucide-react";
 import careerPathsImg from "@/assets/career-paths.jpg";
+import ProjectManagement from "./ProjectManagement";
+import LearningPath from "./LearningPath";
 
 const CareerPathsSection = () => {
   const [selectedPath, setSelectedPath] = useState(0);
+  const [showLearningPath, setShowLearningPath] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
 
   const careerPaths = [
     {
@@ -212,11 +217,20 @@ const CareerPathsSection = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button variant="hero" size="lg" className="group">
+                <Button 
+                  variant="hero" 
+                  size="lg" 
+                  className="group"
+                  onClick={() => setShowLearningPath(true)}
+                >
                   Start Learning Path
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <Button variant="glass" size="lg">
+                <Button 
+                  variant="glass" 
+                  size="lg"
+                  onClick={() => setShowProjects(true)}
+                >
                   View Projects
                 </Button>
               </div>
@@ -266,6 +280,32 @@ const CareerPathsSection = () => {
           </div>
         </div>
       </div>
+
+      {/* Learning Path Dialog */}
+      <Dialog open={showLearningPath} onOpenChange={setShowLearningPath}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{careerPaths[selectedPath].title} Learning Path</DialogTitle>
+          </DialogHeader>
+          <LearningPath 
+            careerPath={careerPaths[selectedPath].title}
+            onClose={() => setShowLearningPath(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Projects Dialog */}
+      <Dialog open={showProjects} onOpenChange={setShowProjects}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{careerPaths[selectedPath].title} Projects</DialogTitle>
+          </DialogHeader>
+          <ProjectManagement 
+            careerPath={careerPaths[selectedPath].title}
+            onClose={() => setShowProjects(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import PublicProfile from "./pages/PublicProfile";
+import Students from "./pages/Students";
 import NotFound from "./pages/NotFound";
 import AboutUs from "./pages/AboutUs";
 import OurTeam from "./pages/OurTeam";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/students" element={<Students />} />
             <Route path="/public-profile/:userId" element={<PublicProfile />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/team" element={<OurTeam />} />

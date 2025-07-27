@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, UserRole } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Brain, User, Mail, Lock, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Brain, User, Mail, Lock, Loader2, GraduationCap, Briefcase } from "lucide-react";
 import { toast } from "sonner";
 
 const Auth = () => {
@@ -27,7 +28,17 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    fullName: ""
+    fullName: "",
+    role: "" as UserRole | "",
+    // Student specific fields
+    university: "",
+    degree: "",
+    yearOfStudy: "",
+    // Industry expert specific fields
+    company: "",
+    position: "",
+    industry: "",
+    experience: ""
   });
 
   // Redirect if already authenticated
@@ -49,6 +60,7 @@ const Auth = () => {
       toast.error("Login failed: " + error.message);
     } else {
       toast.success("Welcome back!");
+      // Redirect based on user role will be handled by the useAuth hook
       navigate("/");
     }
     
@@ -72,14 +84,48 @@ const Auth = () => {
       return;
     }
 
-    const { error } = await signUp(signupData.email, signupData.password, signupData.fullName);
+    if (!signupData.role) {
+      setError("Please select your role");
+      setIsLoading(false);
+      return;
+    }
+
+    // Prepare additional data based on role
+    const additionalData = signupData.role === 'student' 
+      ? {
+          university: signupData.university,
+          degree: signupData.degree,
+          yearOfStudy: signupData.yearOfStudy,
+          skills: [],
+          linkedinUrl: '',
+          githubUrl: '',
+          portfolioUrl: ''
+        }
+      : {
+          company: signupData.company,
+          position: signupData.position,
+          industry: signupData.industry,
+          experience: signupData.experience
+        };
+
+    const { error } = await signUp(
+      signupData.email, 
+      signupData.password, 
+      signupData.fullName, 
+      signupData.role as UserRole,
+      additionalData
+    );
     
     if (error) {
       setError(error.message);
       toast.error("Signup failed: " + error.message);
     } else {
-      toast.success("Account created successfully! Please complete your profile.");
-      navigate("/profile");
+      toast.success("Account created successfully!");
+      if (signupData.role === 'student') {
+        navigate("/profile");
+      } else {
+        navigate("/students");
+      }
     }
     
     setIsLoading(false);
@@ -209,6 +255,121 @@ const Auth = () => {
                       />
                     </div>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="role-select">I am a</Label>
+                    <Select onValueChange={(value) => setSignupData({...signupData, role: value as UserRole})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="student">
+                          <div className="flex items-center space-x-2">
+                            <GraduationCap className="w-4 h-4" />
+                            <span>Student</span>
+                          </div>
+                        </SelectItem>
+                        <SelectItem value="industry_expert">
+                          <div className="flex items-center space-x-2">
+                            <Briefcase className="w-4 h-4" />
+                            <span>Industry Expert / Employer</span>
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Student specific fields */}
+                  {signupData.role === 'student' && (
+                    <div className="space-y-4 p-4 bg-primary/5 rounded-lg border border-primary/10">
+                      <h4 className="font-medium text-sm text-primary">Student Information</h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="university">University</Label>
+                          <Input
+                            id="university"
+                            placeholder="University of Colombo"
+                            value={signupData.university}
+                            onChange={(e) => setSignupData({...signupData, university: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="degree">Degree Program</Label>
+                          <Input
+                            id="degree"
+                            placeholder="Computer Science"
+                            value={signupData.degree}
+                            onChange={(e) => setSignupData({...signupData, degree: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="year">Year of Study</Label>
+                          <Select onValueChange={(value) => setSignupData({...signupData, yearOfStudy: value})}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1st Year">1st Year</SelectItem>
+                              <SelectItem value="2nd Year">2nd Year</SelectItem>
+                              <SelectItem value="3rd Year">3rd Year</SelectItem>
+                              <SelectItem value="4th Year">4th Year</SelectItem>
+                              <SelectItem value="Graduate">Graduate</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Industry expert specific fields */}
+                  {signupData.role === 'industry_expert' && (
+                    <div className="space-y-4 p-4 bg-secondary/5 rounded-lg border border-secondary/10">
+                      <h4 className="font-medium text-sm text-secondary">Professional Information</h4>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="company">Company</Label>
+                          <Input
+                            id="company"
+                            placeholder="Tech Solutions Lanka"
+                            value={signupData.company}
+                            onChange={(e) => setSignupData({...signupData, company: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="position">Position</Label>
+                          <Input
+                            id="position"
+                            placeholder="Senior Software Engineer"
+                            value={signupData.position}
+                            onChange={(e) => setSignupData({...signupData, position: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="industry">Industry</Label>
+                          <Input
+                            id="industry"
+                            placeholder="Information Technology"
+                            value={signupData.industry}
+                            onChange={(e) => setSignupData({...signupData, industry: e.target.value})}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="experience">Experience</Label>
+                          <Select onValueChange={(value) => setSignupData({...signupData, experience: value})}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select experience" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1-2 years">1-2 years</SelectItem>
+                              <SelectItem value="3-5 years">3-5 years</SelectItem>
+                              <SelectItem value="5-10 years">5-10 years</SelectItem>
+                              <SelectItem value="10+ years">10+ years</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
@@ -260,7 +421,11 @@ const Auth = () => {
                         Creating account...
                       </>
                     ) : (
-                      "Create Account"
+                      <>
+                        {signupData.role === 'student' && <GraduationCap className="mr-2 h-4 w-4" />}
+                        {signupData.role === 'industry_expert' && <Briefcase className="mr-2 h-4 w-4" />}
+                        Create {signupData.role === 'student' ? 'Student' : 'Professional'} Account
+                      </>
                     )}
                   </Button>
                 </form>

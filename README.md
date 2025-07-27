@@ -1,22 +1,23 @@
-# Welcome to your Lovable project
+# NextStep - Career Discovery Platform for Sri Lankan Students
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/e62971a8-5334-47ac-9514-71b90e007efe
+**URL**: Custom deployment available
+**Description**: A comprehensive career discovery and learning platform
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use Local Development**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e62971a8-5334-47ac-9514-71b90e007efe) and start prompting.
+Clone this repository and work with your preferred IDE for professional development.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made locally should be committed to this repository.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes. This is the recommended development approach.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -62,12 +63,17 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/e62971a8-5334-47ac-9514-71b90e007efe) and click on Share -> Publish.
+You can deploy this project to various hosting platforms:
 
-## Can I connect a custom domain to my Lovable project?
+- **Vercel**: Connect your GitHub repo for automatic deployments
+- **Netlify**: Deploy from your Git repository
+- **GitHub Pages**: For static deployment
+- **Custom Server**: Deploy to your own hosting environment
 
-Yes, you can!
+## Can I connect a custom domain?
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+Yes, you can connect a custom domain through your hosting provider:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+For most platforms, navigate to your project settings and add your custom domain.
+
+Configure your DNS settings to point to your hosting provider.

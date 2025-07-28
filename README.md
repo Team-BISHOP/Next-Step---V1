@@ -92,9 +92,6 @@ cd backend
 # Restore dependencies
 dotnet restore
 
-# Run database migrations
-dotnet ef database update
-
 # Start the backend server
 dotnet run
 ```
@@ -110,9 +107,6 @@ cd frontend
 
 # Install dependencies
 npm install
-
-# Create environment file
-cp .env.example .env
 
 # Start the development server
 npm run dev
@@ -155,11 +149,17 @@ VITE_API_URL=https://localhost:7001/api
 
 #### Backend
 ```bash
+# Restore dependencies
+dotnet restore
+
 # Run in development mode
 dotnet run
 
 # Run with hot reload
 dotnet watch run
+
+# Install CLI tool for Entity Framework Core
+dotnet tool install --global dotnet-ef
 
 # Create new migration
 dotnet ef migrations add MigrationName

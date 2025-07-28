@@ -7,7 +7,7 @@ using NextStepBackend.Data;
 
 #nullable disable
 
-namespace NextStep.Migrations
+namespace NextStep.Data.Migrations
 {
     [DbContext(typeof(NextStepDbContext))]
     partial class NextStepDbContextModelSnapshot : ModelSnapshot
@@ -28,9 +28,7 @@ namespace NextStep.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -65,7 +63,7 @@ namespace NextStep.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Course");
                 });
 
             modelBuilder.Entity("NextStepBackend.Models.Profile", b =>
@@ -139,9 +137,7 @@ namespace NextStep.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
@@ -164,9 +160,7 @@ namespace NextStep.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -198,34 +192,7 @@ namespace NextStep.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("NextStepBackend.Models.Subscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.ToTable("Subscriptions");
+                    b.ToTable("Project");
                 });
 
             modelBuilder.Entity("NextStepBackend.Models.User", b =>
@@ -235,9 +202,7 @@ namespace NextStep.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -259,9 +224,7 @@ namespace NextStep.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -284,9 +247,7 @@ namespace NextStep.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("EnrolledAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime('now')");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("INTEGER");
@@ -301,10 +262,9 @@ namespace NextStep.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("UserId", "CourseId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.ToTable("UserCourses");
+                    b.ToTable("UserCourse");
                 });
 
             modelBuilder.Entity("NextStepBackend.Models.Profile", b =>

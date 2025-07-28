@@ -162,7 +162,7 @@ dotnet watch run
 dotnet tool install --global dotnet-ef
 
 # Create new migration
-dotnet ef migrations add MigrationName
+dotnet ef migrations add MigrationName --output-dir Data/Migrations
 
 # Update database
 dotnet ef database update

@@ -23,6 +23,21 @@ const CareerPathsSection = () => {
   const [showLearningPath, setShowLearningPath] = useState(false);
   const [showProjects, setShowProjects] = useState(false);
 
+  // Function to handle card click and scroll to details
+  const handleCardClick = (index: number) => {
+    setSelectedPath(index);
+    // Scroll to the details section smoothly
+    setTimeout(() => {
+      const detailsSection = document.getElementById('career-details');
+      if (detailsSection) {
+        detailsSection.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }, 100); // Small delay to ensure state update
+  };
+
   const careerPaths = [
     {
       title: "Software Engineer",
@@ -123,7 +138,7 @@ const CareerPathsSection = () => {
               className={`glass-card p-6 cursor-pointer transition-all duration-500 hover:scale-105 group ${
                 selectedPath === index ? 'ring-2 ring-primary' : ''
               }`}
-              onClick={() => setSelectedPath(index)}
+              onClick={() => handleCardClick(index)}
             >
               <div className="space-y-4">
                 {/* Icon */}
@@ -184,7 +199,7 @@ const CareerPathsSection = () => {
         </div>
 
         {/* Selected Path Details */}
-        <div className="glass-card p-8 rounded-2xl">
+        <div id="career-details" className="glass-card p-8 rounded-2xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-6">
               <div className="flex items-center space-x-4">

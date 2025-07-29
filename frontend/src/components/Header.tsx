@@ -47,7 +47,15 @@ const Header = () => {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <div 
+            className="flex items-center space-x-2 cursor-pointer" 
+            onClick={() => {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }}
+          >
             <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
               <Brain className="w-5 h-5 text-white" />
             </div>
@@ -108,12 +116,6 @@ const Header = () => {
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user.fullName}</p>
                         <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                        {user.profileData?.company && (
-                          <p className="text-xs leading-none text-muted-foreground">{user.profileData.company}</p>
-                        )}
-                        {user.profileData?.university && (
-                          <p className="text-xs leading-none text-muted-foreground">{user.profileData.university}</p>
-                        )}
                       </div>
                     </div>
                     <DropdownMenuSeparator />

@@ -8,10 +8,21 @@ import AIQuizSection from "@/components/AIQuizSection";
 import LearningSection from "@/components/LearningSection";
 import GamificationSection from "@/components/GamificationSection";
 import Footer from "@/components/Footer";
+import BackToTopButton from "@/components/BackToTopButton";
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Scroll to top on page load/refresh
+    window.scrollTo(0, 0);
+    
+    // Disable browser's scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  }, []);
 
   useEffect(() => {
     // Redirect industry experts to students page upon login
@@ -31,6 +42,7 @@ const Index = () => {
         <GamificationSection />
       </main>
       <Footer />
+      <BackToTopButton />
     </div>
   );
 };

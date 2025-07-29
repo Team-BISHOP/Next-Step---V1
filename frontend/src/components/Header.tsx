@@ -42,6 +42,27 @@ const Header = () => {
 
   const navItems = getNavItems();
 
+  // Function to handle smooth scrolling to sections
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    
+    // Check if it's a hash link (section on same page)
+    if (href.startsWith('#')) {
+      const elementId = href.substring(1); // Remove the '#'
+      const element = document.getElementById(elementId);
+      
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    } else {
+      // For non-hash links, use regular navigation
+      navigate(href);
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,7 +89,8 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-1"
+                onClick={(e) => handleNavClick(e, item.href)}
+                className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-1 cursor-pointer"
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>
@@ -164,8 +186,11 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-2"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => {
+                  handleNavClick(e, item.href);
+                  setIsMenuOpen(false);
+                }}
+                className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-2 cursor-pointer"
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>

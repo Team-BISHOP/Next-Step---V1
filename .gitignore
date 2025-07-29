@@ -336,9 +336,6 @@ check-errors.js
 verify-setup.js
 setup.js
 
-# Server folder (seems like old backend)
-server/
-
 # Old README files
 README-NEW.md
 

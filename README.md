@@ -29,6 +29,7 @@
 ## ✨ Features
 
 ### For Students
+
 - 🎓 **Smart Career Assessment** - AI-powered career path recommendations
 - 📊 **Skill Tracking** - Monitor your learning progress and achievements
 - 🏆 **Gamification** - Earn points, level up, and compete on leaderboards
@@ -36,12 +37,14 @@
 - 📚 **Curated Learning** - Access to relevant courses and resources
 
 ### For Industry Experts
+
 - 👥 **Student Discovery** - Find and mentor promising students
 - 🎯 **Talent Pipeline** - Build relationships with future employees
 - 📈 **Impact Tracking** - See your influence on student career paths
 - 🌟 **Professional Branding** - Showcase your expertise and company
 
 ### Platform Features
+
 - 🔐 **Secure Authentication** - JWT-based user authentication
 - 📱 **Responsive Design** - Works perfectly on all devices
 - ⚡ **Fast Performance** - Optimized with modern web technologies
@@ -51,6 +54,7 @@
 ## 🏗️ Tech Stack
 
 ### Backend
+
 - **Framework**: ASP.NET Core 9.0
 - **Database**: SQLite with Entity Framework Core
 - **Authentication**: JWT (JSON Web Tokens)
@@ -58,6 +62,7 @@
 - **Architecture**: Clean Architecture with Dependency Injection
 
 ### Frontend
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite (Lightning fast HMR)
 - **UI Framework**: Tailwind CSS + shadcn/ui components
@@ -66,6 +71,7 @@
 - **HTTP Client**: Native Fetch API
 
 ### Development Tools
+
 - **Package Manager**: npm
 - **Code Quality**: ESLint + Prettier
 - **Version Control**: Git with conventional commits
@@ -74,20 +80,29 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - **Node.js** (v18 or higher) - [Download here](https://nodejs.org/)
 - **.NET SDK** (v9.0 or higher) - [Download here](https://dotnet.microsoft.com/download)
 - **Git** - [Download here](https://git-scm.com/)
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/Team-BISHOP/nextstep.git
 cd nextstep
 ```
 
 ### 2. Backend Setup
+
 ```bash
 # Navigate to backend directory
 cd backend
+
+# Install ef tool - one time command
+dotnet tool install --global dotnet-ef
+
+# Optional - one time command
+dotnet ef migrations add InitialCrate
 
 # Restore dependencies
 dotnet restore
@@ -97,10 +112,12 @@ dotnet run
 ```
 
 **Backend will be available at:**
+
 - API: `https://localhost:7010`
 - Swagger Docs: `https://localhost:7010/swagger`
 
 ### 3. Frontend Setup
+
 ```bash
 # Navigate to frontend directory (in a new terminal)
 cd frontend
@@ -113,9 +130,11 @@ npm run dev
 ```
 
 **Frontend will be available at:**
+
 - App: `http://localhost:5173`
 
 ### 4. Test the Connection
+
 1. Visit `http://localhost:5173/auth`
 2. Create a new account (Student or Industry Expert)
 3. Login with your credentials
@@ -126,6 +145,7 @@ npm run dev
 ### Environment Variables
 
 #### Backend (`backend/appsettings.Development.json`)
+
 ```json
 {
   "ConnectionStrings": {
@@ -141,6 +161,7 @@ npm run dev
 ```
 
 #### Frontend (`frontend/.env`)
+
 ```env
 VITE_API_URL=https://localhost:7001/api
 ```
@@ -148,6 +169,7 @@ VITE_API_URL=https://localhost:7001/api
 ### Development Commands
 
 #### Backend
+
 ```bash
 # Restore dependencies
 dotnet restore
@@ -172,6 +194,7 @@ dotnet test
 ```
 
 #### Frontend
+
 ```bash
 # Start development server
 npm run dev
@@ -193,12 +216,13 @@ npm run lint:fix
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create new user account |
-| POST | `/api/auth/login` | Authenticate user |
+| Method | Endpoint             | Description             |
+| ------ | -------------------- | ----------------------- |
+| POST   | `/api/auth/register` | Create new user account |
+| POST   | `/api/auth/login`    | Authenticate user       |
 
 ### Interactive Documentation
+
 Visit `https://localhost:7010/swagger` when the backend is running for full interactive API documentation.
 
 ## 🤝 Contributing
@@ -206,6 +230,7 @@ Visit `https://localhost:7010/swagger` when the backend is running for full inte
 We welcome contributions from the community!
 
 ### Code Style
+
 - **Backend**: Follow C# coding conventions
 - **Frontend**: ESLint + Prettier configurations included
 - **Database**: Use Entity Framework migrations for schema changes
@@ -215,36 +240,45 @@ We welcome contributions from the community!
 ### Common Issues
 
 #### CORS Errors
+
 ```
 Access to fetch has been blocked by CORS policy
 ```
+
 **Solution**: Ensure backend is running and CORS is configured for your frontend URL.
 
 #### Database Not Found
+
 ```
 SQLite Error 1: 'no such table: Users'
 ```
+
 **Solution**: Run `dotnet ef database update` in the backend directory.
 
 #### Port Already in Use
+
 ```
 Failed to bind to address https://localhost:7010
 ```
+
 **Solution**: Kill the process using the port or change the port in `launchSettings.json`.
 
 ## 🎯 Roadmap
 
 ### Phase 1 (Current) ✅
+
 - [x] User authentication system
 - [x] Basic frontend structure
 - [x] API documentation
 
 ### Phase 2 (In Progress) 🚧
+
 - [ ] User profile management
 - [ ] Career assessment quiz
 - [ ] Student-expert matching
 
 ### Phase 3 (Planned) 📋
+
 - [ ] Learning path recommendations
 - [ ] Progress tracking
 - [ ] Gamification system
@@ -274,4 +308,3 @@ This project is licensed under the Apache License - see the [LICENSE](LICENSE) f
 - **Issues**: [https://github.com/Team-BISHOP/nextstep/issues](https://github.com/Team-BISHOP/nextstep/issues)
 
 ---
-

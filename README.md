@@ -113,10 +113,10 @@ npm run dev
 ```
 
 **Frontend will be available at:**
-- App: `http://localhost:5173`
+- App: `http://localhost:8080`
 
 ### 4. Test the Connection
-1. Visit `http://localhost:5173/auth`
+1. Visit `http://localhost:8080/auth`
 2. Create a new account (Student or Industry Expert)
 3. Login with your credentials
 4. Explore the platform!
@@ -142,7 +142,7 @@ npm run dev
 
 #### Frontend (`frontend/.env`)
 ```env
-VITE_API_URL=https://localhost:7001/api
+VITE_API_URL=https://localhost:7010/api
 ```
 
 ### Development Commands

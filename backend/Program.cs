@@ -46,7 +46,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:8080")
+        policy.WithOrigins(
+                "http://localhost:3000",           // Frontend dev server
+                "http://localhost:8080",           // Frontend production
+                "http://frontend:80",              // Docker internal
+                "http://nextstep-frontend:80"      // Docker compose service name
+              )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -90,6 +95,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// Add health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
 if (app.Environment.IsDevelopment())
 {

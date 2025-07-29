@@ -98,12 +98,6 @@ cd nextstep
 # Navigate to backend directory
 cd backend
 
-# Install ef tool - one time command
-dotnet tool install --global dotnet-ef
-
-# Optional - one time command
-dotnet ef migrations add InitialCrate
-
 # Restore dependencies
 dotnet restore
 

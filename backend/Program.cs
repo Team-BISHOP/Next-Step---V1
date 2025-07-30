@@ -113,6 +113,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Auto apply pending migrations
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<NextStepDbContext>();
+    db.Database.Migrate(); // Applies any pending migrations
+}
+
 // Initialize database
 using (var scope = app.Services.CreateScope())
 {

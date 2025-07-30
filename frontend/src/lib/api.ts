@@ -40,13 +40,31 @@ class ApiService {
   }
 
   private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
+    const responseText = await response.text();
+    console.log('API Response:', {
+      status: response.status,
+      statusText: response.statusText,
+      url: response.url,
+      body: responseText
+    });
+
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
+      let errorData;
+      try {
+        errorData = JSON.parse(responseText);
+      } catch {
+        errorData = { message: responseText || `HTTP error! status: ${response.status}` };
+      }
       throw new Error(
-        errorData.message || `HTTP error! status: ${response.status}`
+        errorData.message || errorData.title || `HTTP error! status: ${response.status}`
       );
     }
-    return await response.json();
+    
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      throw new Error('Invalid JSON response from server');
+    }
   }
 
   // Authentication
@@ -250,6 +268,40 @@ class ApiService {
       body: JSON.stringify(unsubscribeData),
     });
     return this.handleResponse<any>(response);
+  }
+
+  // Generic HTTP methods for easier API calls
+  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<T>(response);
+  }
+
+  async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return this.handleResponse<T>(response);
+  }
+
+  async put<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: data ? JSON.stringify(data) : undefined,
+    });
+    return this.handleResponse<T>(response);
+  }
+
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: "DELETE",
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<T>(response);
   }
 }
 

@@ -38,15 +38,20 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Register only auth services
+// Register all services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:8080", "http://localhost:3001")
+        policy.WithOrigins("http://localhost:8080", "http://localhost:3000", "http://localhost:5173")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -59,9 +64,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "NextStep Auth API",
+        Title = "NextStep API",
         Version = "v1",
-        Description = "Authentication API for NextStep System"
+        Description = "Complete API for NextStep System"
     });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -96,7 +101,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextStep Auth API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "NextStep API V1");
         c.RoutePrefix = "swagger";
     });
 }

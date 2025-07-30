@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NextStepBackend.Data;
 
@@ -10,9 +11,11 @@ using NextStepBackend.Data;
 namespace NextStep.Data.Migrations
 {
     [DbContext(typeof(NextStepDbContext))]
-    partial class NextStepDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250729160213_CoreModels")]
+    partial class CoreModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -217,21 +220,8 @@ namespace NextStep.Data.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FullName")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ServiceType")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UnsubscribedAt")
-                        .HasColumnType("TEXT");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

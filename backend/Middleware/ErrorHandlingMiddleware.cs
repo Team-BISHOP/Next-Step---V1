@@ -40,7 +40,17 @@ public class ErrorHandlingMiddleware
             Error = exception.Message
         };
 
-        var jsonResponse = JsonSerializer.Serialize(response);
+        // In development, include stack trace
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        {
+            response.Error = new { Message = exception.Message, StackTrace = exception.StackTrace };
+        }
+
+        var jsonResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+
         await context.Response.WriteAsync(jsonResponse);
     }
 }

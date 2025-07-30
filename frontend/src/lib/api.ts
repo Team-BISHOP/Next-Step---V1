@@ -1,262 +1,257 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://localhost:7010/api';
+const API_BASE_URL = "https://localhost:7010/api";
 
-interface ApiResponse<T = any> {
-    success: boolean;
-    data?: T;
-    message?: string;
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data?: T;
+  error?: any;
 }
 
-class ApiClient {
-    private baseURL: string;
-    private token: string | null;
-
-    constructor() {
-        this.baseURL = API_BASE_URL;
-        this.token = localStorage.getItem('nextStep_token');
-    }
-
-    setToken(token: string | null) {
-        this.token = token;
-        if (token) {
-            localStorage.setItem('nextStep_token', token);
-        } else {
-            localStorage.removeItem('nextStep_token');
-        }
-    }
-
-    getHeaders(): Record<string, string> {
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-        };
-
-        if (this.token) {
-            headers.Authorization = `Bearer ${this.token}`;
-        }
-
-        return headers;
-    }
-
-    async request(endpoint: string, options: RequestInit = {}): Promise<ApiResponse> {
-        const url = `${this.baseURL}${endpoint}`;
-        const config: RequestInit = {
-            headers: this.getHeaders(),
-            ...options,
-        };
-
-        try {
-            const response = await fetch(url, config);
-            const data = await response.json();
-
-            if (!response.ok) {
-                return {
-                    success: false,
-                    message: data.message || 'API request failed'
-                };
-            }
-
-            return {
-                success: true,
-                data,
-                message: data.message
-            };
-        } catch (error: any) {
-            console.error('API request error:', error);
-            return {
-                success: false,
-                message: error.message || 'Network error'
-            };
-        }
-    }
-
-    // Generic HTTP methods
-    async get(endpoint: string): Promise<ApiResponse> {
-        return this.request(endpoint, { method: 'GET' });
-    }
-
-    async post(endpoint: string, data?: any): Promise<ApiResponse> {
-        return this.request(endpoint, {
-            method: 'POST',
-            body: data ? JSON.stringify(data) : undefined,
-        });
-    }
-
-    async put(endpoint: string, data?: any): Promise<ApiResponse> {
-        return this.request(endpoint, {
-            method: 'PUT',
-            body: data ? JSON.stringify(data) : undefined,
-        });
-    }
-
-    async delete(endpoint: string): Promise<ApiResponse> {
-        return this.request(endpoint, { method: 'DELETE' });
-    }
-
-    // Auth endpoints
-    async register(userData: any): Promise<ApiResponse> {
-        return this.post('/auth/register', userData);
-    }
-
-    async login(credentials: any): Promise<ApiResponse> {
-        const response = await this.post('/auth/login', credentials);
-
-        if (response.success && response.data?.data?.token) {
-            // Backend returns { success: true, data: { token: "...", user: {...} } }
-            this.setToken(response.data.data.token);
-        }
-
-        return response;
-    }
-
-    async logout(): Promise<ApiResponse> {
-        try {
-            const response = await this.post('/auth/logout');
-            return response;
-        } finally {
-            this.setToken(null);
-        }
-    }
-
-    async getCurrentUser(): Promise<ApiResponse> {
-        return this.get('/auth/me');
-    }
-
-    async changePassword(passwordData: any): Promise<ApiResponse> {
-        return this.put('/auth/change-password', passwordData);
-    }
-
-    // Profile endpoints
-    async getMyProfile(): Promise<ApiResponse> {
-        return this.get('/profiles/me');
-    }
-
-    async updateMyProfile(profileData: any): Promise<ApiResponse> {
-        return this.put('/profiles/me', profileData);
-    }
-
-    async getUserProfile(userId: string): Promise<ApiResponse> {
-        return this.get(`/profiles/${userId}`);
-    }
-
-    async getStudentProfiles(params: Record<string, any> = {}): Promise<ApiResponse> {
-        const queryString = new URLSearchParams(params).toString();
-        return this.get(`/profiles?${queryString}`);
-    }
-
-    async addSkill(skill: string): Promise<ApiResponse> {
-        return this.post('/profiles/skills', { skill });
-    }
-
-    // Analytics endpoints
-    async getMyAnalytics(): Promise<ApiResponse> {
-        return this.get('/analytics/me');
-    }
-
-    async getUserAnalytics(userId: string): Promise<ApiResponse> {
-        return this.get(`/analytics/user/${userId}`);
-    }
-
-    // Achievements endpoints
-    async getMyAchievements(): Promise<ApiResponse> {
-        return this.get('/achievements/me');
-    }
-
-    async getUserAchievements(userId: string): Promise<ApiResponse> {
-        return this.get(`/achievements/user/${userId}`);
-    }
-
-    async getAchievementTemplates(): Promise<ApiResponse> {
-        return this.get('/achievements/templates');
-    }
-
-    // Leaderboard endpoints
-    async getLeaderboard(params: Record<string, any> = {}): Promise<ApiResponse> {
-        const queryString = new URLSearchParams(params).toString();
-        return this.get(`/leaderboard?${queryString}`);
-    }
-
-    async getUserRank(userId: string, category = 'overall'): Promise<ApiResponse> {
-        return this.get(`/leaderboard/user/${userId}/rank?category=${category}`);
-    }
-
-    // Courses endpoints
-    async getCourses(params: Record<string, any> = {}): Promise<ApiResponse> {
-        const queryString = new URLSearchParams(params).toString();
-        return this.get(`/courses?${queryString}`);
-    }
-
-    async getCourse(courseId: string): Promise<ApiResponse> {
-        return this.get(`/courses/${courseId}`);
-    }
-
-    async enrollInCourse(courseId: string): Promise<ApiResponse> {
-        return this.post(`/courses/${courseId}/enroll`);
-    }
-
-    async getFeaturedCourses(): Promise<ApiResponse> {
-        return this.get('/courses/featured/list');
-    }
-
-    // Quiz endpoints
-    async getQuizQuestions(): Promise<ApiResponse> {
-        return this.get('/quiz/questions');
-    }
-
-    async submitQuiz(answers: any): Promise<ApiResponse> {
-        return this.post('/quiz/submit', { answers });
-    }
-
-    async getQuizResults(userId: string): Promise<ApiResponse> {
-        return this.get(`/quiz/results/${userId}`);
-    }
-
-    // Upload endpoints
-    async uploadAvatar(file: File): Promise<ApiResponse> {
-        const formData = new FormData();
-        formData.append('avatar', file);
-
-        return this.request('/upload/avatar', {
-            method: 'POST',
-            headers: {
-                ...(this.token && { Authorization: `Bearer ${this.token}` }),
-            },
-            body: formData,
-        });
-    }
-
-    async uploadProjectFiles(files: File[]): Promise<ApiResponse> {
-        const formData = new FormData();
-        files.forEach(file => {
-            formData.append('files', file);
-        });
-
-        return this.request('/upload/project', {
-            method: 'POST',
-            headers: {
-                ...(this.token && { Authorization: `Bearer ${this.token}` }),
-            },
-            body: formData,
-        });
-    }
-
-    // Users endpoints
-    async updateUser(userData: any): Promise<ApiResponse> {
-        return this.put('/users/me', userData);
-    }
-
-    async deactivateAccount(): Promise<ApiResponse> {
-        return this.delete('/users/me');
-    }
-
-    async getPlatformStats(): Promise<ApiResponse> {
-        return this.get('/users/stats');
-    }
-
-    // Health check
-    async healthCheck(): Promise<ApiResponse> {
-        return this.get('/health');
-    }
+interface LoginRequest {
+  email: string;
+  password: string;
 }
 
-// Create and export a singleton instance
-const apiClient = new ApiClient();
-export default apiClient;
+interface RegisterRequest {
+  fullName: string;
+  email: string;
+  password: string;
+  role: string;
+}
+
+interface LoginResponse {
+  token: string;
+  user: {
+    id: number;
+    fullName: string;
+    email: string;
+    role: string;
+    profileData?: any;
+  };
+}
+
+class ApiService {
+  private getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem("authToken");
+    return {
+      "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+  }
+
+  private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.message || `HTTP error! status: ${response.status}`
+      );
+    }
+    return await response.json();
+  }
+
+  // Authentication
+  async login(credentials: LoginRequest): Promise<ApiResponse<LoginResponse>> {
+    const response = await fetch(`${API_BASE_URL}/Auth/login`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(credentials),
+    });
+    return this.handleResponse<LoginResponse>(response);
+  }
+
+  async register(
+    userData: RegisterRequest
+  ): Promise<ApiResponse<LoginResponse>> {
+    const response = await fetch(`${API_BASE_URL}/Auth/register`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(userData),
+    });
+    return this.handleResponse<LoginResponse>(response);
+  }
+
+  // Courses
+  async getCourses(
+    level?: string,
+    category?: string
+  ): Promise<ApiResponse<any[]>> {
+    const params = new URLSearchParams();
+    if (level) params.append("level", level);
+    if (category) params.append("category", category);
+
+    const response = await fetch(`${API_BASE_URL}/Courses?${params}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any[]>(response);
+  }
+
+  async getCourse(courseId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Courses/${courseId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async enrollInCourse(courseId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Courses/${courseId}/enroll`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async updateCourseProgress(
+    courseId: number,
+    progress: number
+  ): Promise<ApiResponse<any>> {
+    const response = await fetch(
+      `${API_BASE_URL}/Courses/${courseId}/progress`,
+      {
+        method: "PUT",
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ progress }),
+      }
+    );
+    return this.handleResponse<any>(response);
+  }
+
+  async completeCourse(courseId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(
+      `${API_BASE_URL}/Courses/${courseId}/complete`,
+      {
+        method: "POST",
+        headers: this.getAuthHeaders(),
+      }
+    );
+    return this.handleResponse<any>(response);
+  }
+
+  // Profile
+  async getMyProfile(): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Profiles/me`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async updateMyProfile(profileData: any): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Profiles/me`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(profileData),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async getPublicProfile(userId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Profiles/${userId}/public`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async getStudentProfiles(
+    page = 1,
+    pageSize = 20
+  ): Promise<ApiResponse<any[]>> {
+    const response = await fetch(
+      `${API_BASE_URL}/Profiles/students?page=${page}&pageSize=${pageSize}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+    return this.handleResponse<any[]>(response);
+  }
+
+  // Projects
+  async getProjects(userId?: number): Promise<ApiResponse<any[]>> {
+    const params = userId ? `?userId=${userId}` : "";
+    const response = await fetch(`${API_BASE_URL}/Projects${params}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any[]>(response);
+  }
+
+  async getProject(projectId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Projects/${projectId}`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async createProject(projectData: any): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Projects`, {
+      method: "POST",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(projectData),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async updateProject(
+    projectId: number,
+    projectData: any
+  ): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Projects/${projectId}`, {
+      method: "PUT",
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(projectData),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async deleteProject(projectId: number): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Projects/${projectId}`, {
+      method: "DELETE",
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  // Leaderboard
+  async getLeaderboard(page = 1, pageSize = 50): Promise<ApiResponse<any[]>> {
+    const response = await fetch(
+      `${API_BASE_URL}/Leaderboard?page=${page}&pageSize=${pageSize}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
+    return this.handleResponse<any[]>(response);
+  }
+
+  async getMyRank(): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Leaderboard/my-rank`, {
+      headers: this.getAuthHeaders(),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  // Subscription
+  async subscribe(subscriptionData: {
+    email: string;
+    fullName?: string;
+    serviceType?: string;
+  }): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Subscription/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(subscriptionData),
+    });
+    return this.handleResponse<any>(response);
+  }
+
+  async unsubscribe(unsubscribeData: {
+    email: string;
+    serviceType?: string;
+  }): Promise<ApiResponse<any>> {
+    const response = await fetch(`${API_BASE_URL}/Subscription/unsubscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(unsubscribeData),
+    });
+    return this.handleResponse<any>(response);
+  }
+}
+
+export const apiService = new ApiService();
+export default apiService;

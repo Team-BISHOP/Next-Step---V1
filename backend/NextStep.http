@@ -1,6 +1,6 @@
 ### 🔧 Variables
-@baseUrl = https://localhost:7010/api
-@token = 
+@baseUrl = http://localhost:7010/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJicnVjZS53YXluZUBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdHVkZW50IiwidXNlcklkIjoiMSIsImV4cCI6MTc1MzkwNDc5NSwiaXNzIjoiTmV4dFN0ZXBBUEkiLCJhdWQiOiJOZXh0U3RlcENsaWVudCJ9.NlPEK3cD7NKHavp3D37vcsnaEB8g-B7EjNm_fm8LNwI
 
 ### 🛡️ Register - Student (Bruce Wayne)
 POST {{baseUrl}}/Auth/register
@@ -44,6 +44,7 @@ Authorization: Bearer {{token}}
 
 {
   "fullName": "Bruce Wayne Updated",
+  "avatarUrl": "/home/shinzo/Pictures/DP/0a043149938b46a85bf47c56998d90c2.jpg",
   "university": "University of Gotham",
   "yearOfStudy": 3,
   "major": "Criminology & CS",

@@ -311,6 +311,7 @@ docker-compose*
 # ============================================
 
 # Temporary files
+*.http
 *.tmp
 *.temp
 *.bak

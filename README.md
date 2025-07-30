@@ -191,15 +191,70 @@ npm run lint:fix
 
 ## 📚 API Documentation
 
-### Authentication Endpoints
+### 🛡️ Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Create new user account |
-| POST | `/api/auth/login` | Authenticate user |
+| Method | Endpoint             | Description             |
+| ------ | -------------------- | ----------------------- |
+| POST   | `/api/Auth/register` | Create new user account |
+| POST   | `/api/Auth/login`    | Authenticate user       |
+
+---
+
+### 📘 Course Endpoints
+
+| Method | Endpoint                           | Description                 |
+| ------ | ---------------------------------- | --------------------------- |
+| GET    | `/api/Courses`                     | Get all courses             |
+| GET    | `/api/Courses/{courseId}`          | Get course by ID            |
+| POST   | `/api/Courses/{courseId}/enroll`   | Enroll in a course          |
+| PUT    | `/api/Courses/{courseId}/progress` | Update progress in a course |
+| POST   | `/api/Courses/{courseId}/complete` | Mark course as complete     |
+
+---
+
+### 🏆 Leaderboard Endpoints
+
+| Method | Endpoint                   | Description               |
+| ------ | -------------------------- | ------------------------- |
+| GET    | `/api/Leaderboard`         | Get global leaderboard    |
+| GET    | `/api/Leaderboard/my-rank` | Get logged-in user's rank |
+
+---
+
+### 🙍‍♂️ Profile Endpoints
+
+| Method | Endpoint                        | Description                  |
+| ------ | ------------------------------- | ---------------------------- |
+| GET    | `/api/Profiles/me`              | Get your profile             |
+| PUT    | `/api/Profiles/me`              | Update your profile          |
+| GET    | `/api/Profiles/{userId}/public` | Get public profile of a user |
+| GET    | `/api/Profiles/students`        | Get list of student profiles |
+
+---
+
+### 📂 Project Endpoints
+
+| Method | Endpoint                    | Description          |
+| ------ | --------------------------- | -------------------- |
+| GET    | `/api/Projects`             | Get all projects     |
+| POST   | `/api/Projects`             | Create new project   |
+| GET    | `/api/Projects/{projectId}` | Get project by ID    |
+| PUT    | `/api/Projects/{projectId}` | Update project by ID |
+| DELETE | `/api/Projects/{projectId}` | Delete project by ID |
+
+---
+
+### 📨 Subscription Endpoints
+
+| Method | Endpoint                        | Description                |
+| ------ | ------------------------------- | -------------------------- |
+| POST   | `/api/Subscription/subscribe`   | Subscribe to a service     |
+| POST   | `/api/Subscription/unsubscribe` | Unsubscribe from a service |
+
+---
 
 ### Interactive Documentation
-Visit `https://localhost:7010/swagger` when the backend is running for full interactive API documentation.
+Visit [`https://localhost:7010/swagger`](https://localhost:7010/swagger) while the backend is running to explore the full Swagger-based API documentation.
 
 ## 🤝 Contributing
 

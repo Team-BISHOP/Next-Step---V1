@@ -1,9 +1,40 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Target, TrendingUp } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import heroBg from "@/assets/hero-bg.jpg";
 import AnimatedText from "./AnimatedText";
 
 const HeroSection = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleStartJourney = () => {
+    if (!user) {
+      // User not logged in, redirect to login page
+      navigate("/auth");
+    } else {
+      // User is logged in, scroll to career paths section
+      const careerPathsElement = document.getElementById("careers");
+      if (careerPathsElement) {
+        careerPathsElement.scrollIntoView({ 
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+    }
+  };
+
+  const handleTakeQuiz = () => {
+    const quizElement = document.getElementById("quiz");
+    if (quizElement) {
+      quizElement.scrollIntoView({ 
+        behavior: "smooth",
+        block: "start"
+      });
+    }
+  };
+
   const stats = [
     { label: "Career Paths", value: "15+", icon: Target },
     { label: "Students Helped", value: "2,500+", icon: TrendingUp },
@@ -64,11 +95,11 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <Button variant="hero" size="lg" className="group">
+            <Button variant="hero" size="lg" className="group" onClick={handleStartJourney}>
               Start Your Journey
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button variant="glass" size="lg">
+            <Button variant="glass" size="lg" onClick={handleTakeQuiz}>
               Take AI Quiz
             </Button>
           </div>

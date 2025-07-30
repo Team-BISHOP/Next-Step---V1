@@ -26,17 +26,53 @@ const AvatarUpload = ({ userId, currentAvatarUrl, onAvatarUpdate }: AvatarUpload
 
       const file = event.target.files[0];
       
-      // TODO: Implement file upload to backend server
-      // For now, simulate successful upload
-      const mockAvatarUrl = URL.createObjectURL(file);
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.');
+      }
 
-      onAvatarUpdate(mockAvatarUrl);
-      toast.success('Avatar updated successfully!');
+      // Validate file size (2MB limit)
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('File size too large. Maximum size is 2MB.');
+      }
+
+      // Convert file to base64 data URL for storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const dataUrl = e.target?.result as string;
+          if (dataUrl) {
+            // Check if the base64 string is too large (limit to ~1MB base64 which is ~750KB file)
+            if (dataUrl.length > 1400000) {
+              throw new Error('Image too large after processing. Please try a smaller image.');
+            }
+            onAvatarUpdate(dataUrl);
+            toast.success('Avatar updated successfully! Remember to save your profile to persist changes.');
+          } else {
+            throw new Error('Failed to read the image file.');
+          }
+        } catch (error: any) {
+          toast.error('Error processing avatar: ' + error.message);
+        } finally {
+          setUploading(false);
+          // Clear the input
+          event.target.value = '';
+        }
+      };
+      reader.onerror = () => {
+        toast.error('Failed to read the image file.');
+        setUploading(false);
+        // Clear the input
+        event.target.value = '';
+      };
+      reader.readAsDataURL(file);
+      
     } catch (error: any) {
       toast.error('Error uploading avatar: ' + error.message);
-    } finally {
       setUploading(false);
     }
+    // Note: setUploading(false) is handled in the reader callbacks above
   };
 
   return (

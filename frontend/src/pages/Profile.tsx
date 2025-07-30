@@ -19,18 +19,20 @@ import UserAnalytics from "@/components/UserAnalytics";
 import Navigation from "@/components/Navigation";
 
 interface Profile {
-  // Common fields
-  full_name?: string;
-  avatar_url?: string;
+  // Common fields - matching backend DTOs
+  id?: number;
+  fullName?: string;
+  avatarUrl?: string;
   
   // Student specific fields
   university?: string;
-  year_of_study?: number;
+  yearOfStudy?: number;
   major?: string;
   skills?: string[];
-  career_interests?: string[];
-  github_username?: string;
-  linkedin_url?: string;
+  careerInterests?: string[];
+  githubUsername?: string;
+  linkedinUrl?: string;
+  portfolioUrl?: string;
   points?: number;
   level?: number;
   
@@ -39,8 +41,8 @@ interface Profile {
   position?: string;
   industry?: string;
   experience?: string;
-  company_website?: string;
-  company_size?: string;
+  companyWebsite?: string;
+  companySize?: string;
   bio?: string;
 }
 
@@ -63,13 +65,13 @@ const Profile = () => {
     if (user) {
       // Initialize profile with user data if available
       setProfile({
-        full_name: user.fullName || '',
-        avatar_url: user.profileData?.avatar || '',
+        fullName: user.fullName || '',
+        avatarUrl: user.profileData?.avatarUrl || '',
         // Student fields
         university: user.profileData?.university || '',
-        major: user.profileData?.degree || '',
-        github_username: user.profileData?.githubUrl?.split('/').pop() || '',
-        linkedin_url: user.profileData?.linkedinUrl || '',
+        major: user.profileData?.major || '',
+        githubUsername: user.profileData?.githubUsername || '',
+        linkedinUrl: user.profileData?.linkedinUrl || '',
         // Industry expert fields
         company: user.profileData?.company || '',
         position: user.profileData?.position || '',
@@ -87,11 +89,27 @@ const Profile = () => {
     
     setIsLoading(true);
     try {
-      const response = await API.get('/profiles/me');
+      console.log('Fetching profile for user:', user.id);
+      const response = await API.get('/Profiles/me');
+      console.log('Fetch profile response:', response);
+      
       if (response.success) {
+        console.log('Setting profile data:', response.data);
         setProfile(response.data);
+        
+        // Notify Header component about avatar if present
+        const profileData = response.data as { avatarUrl?: string };
+        if (profileData.avatarUrl) {
+          window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+            detail: { avatarUrl: profileData.avatarUrl } 
+          }));
+        }
+      } else {
+        console.error('Fetch profile failed:', response);
+        toast.error("Error loading profile: " + (response.message || 'Unknown error'));
       }
     } catch (error: any) {
+      console.error('Fetch profile error:', error);
       toast.error("Error loading profile: " + error.message);
     } finally {
       setIsLoading(false);
@@ -103,19 +121,42 @@ const Profile = () => {
     
     setIsSaving(true);
     try {
-      const response = await API.put('/profiles/me', profile);
+      // Clean up the profile data before sending
+      const profileToSend = {
+        ...profile,
+        // Ensure arrays are not undefined
+        skills: profile.skills || [],
+        careerInterests: profile.careerInterests || [],
+        // Ensure numbers are valid
+        yearOfStudy: profile.yearOfStudy || null,
+        points: profile.points || 0,
+        level: profile.level || 1
+      };
+      
+      console.log('Updating profile with data:', profileToSend);
+      const response = await API.put('/Profiles/me', profileToSend);
+      console.log('Profile update response:', response);
       
       if (response.success) {
         toast.success("Profile updated successfully!");
+        
+        // Notify Header component about avatar change if avatar is present
+        if (profileToSend.avatarUrl) {
+          window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+            detail: { avatarUrl: profileToSend.avatarUrl } 
+          }));
+        }
         
         // Redirect to home page after successful save
         setTimeout(() => {
           navigate("/");
         }, 1500);
       } else {
-        toast.error("Error updating profile: " + response.message);
+        console.error('Profile update failed:', response);
+        toast.error("Error updating profile: " + (response.message || 'Unknown error'));
       }
     } catch (error: any) {
+      console.error('Profile update error:', error);
       toast.error("Error updating profile: " + error.message);
     } finally {
       setIsSaving(false);
@@ -140,10 +181,10 @@ const Profile = () => {
   };
 
   const addInterest = () => {
-    if (newInterest.trim() && !profile.career_interests?.includes(newInterest.trim())) {
+    if (newInterest.trim() && !profile.careerInterests?.includes(newInterest.trim())) {
       setProfile({
         ...profile,
-        career_interests: [...(profile.career_interests || []), newInterest.trim()]
+        careerInterests: [...(profile.careerInterests || []), newInterest.trim()]
       });
       setNewInterest("");
     }
@@ -152,7 +193,7 @@ const Profile = () => {
   const removeInterest = (interest: string) => {
     setProfile({
       ...profile,
-      career_interests: profile.career_interests?.filter(i => i !== interest) || []
+      careerInterests: profile.careerInterests?.filter(i => i !== interest) || []
     });
   };
 
@@ -184,13 +225,13 @@ const Profile = () => {
             <CardHeader className="text-center">
               <div className="flex items-center justify-center space-x-4">
                 <Avatar className="w-20 h-20">
-                  <AvatarImage src={profile.avatar_url} />
+                  <AvatarImage src={profile.avatarUrl} />
                   <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary text-white">
-                    {profile.full_name?.split(' ').map(n => n[0]).join('') || user.email?.[0].toUpperCase()}
+                    {profile.fullName?.split(' ').map(n => n[0]).join('') || user.email?.[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-2xl">{profile.full_name || 'Complete your profile'}</CardTitle>
+                  <CardTitle className="text-2xl">{profile.fullName || 'Complete your profile'}</CardTitle>
                   <CardDescription className="flex items-center space-x-2">
                     <Mail className="w-4 h-4" />
                     <span>{user.email}</span>
@@ -237,9 +278,15 @@ const Profile = () => {
 
           {/* Avatar Upload */}
           <AvatarUpload 
-            userId={user.id}
-            currentAvatarUrl={profile.avatar_url}
-            onAvatarUpdate={(url) => setProfile({...profile, avatar_url: url})}
+            userId={user.id.toString()}
+            currentAvatarUrl={profile.avatarUrl}
+            onAvatarUpdate={(url) => {
+              setProfile({...profile, avatarUrl: url});
+              // Notify Header component about avatar change
+              window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+                detail: { avatarUrl: url } 
+              }));
+            }}
           />
 
           {/* Profile Form */}
@@ -265,8 +312,8 @@ const Profile = () => {
                     id="fullName"
                     placeholder="Your full name"
                     className="pl-10"
-                    value={profile.full_name || ''}
-                    onChange={(e) => setProfile({...profile, full_name: e.target.value})}
+                    value={profile.fullName || ''}
+                    onChange={(e) => setProfile({...profile, fullName: e.target.value})}
                   />
                 </div>
               </div>
@@ -291,7 +338,7 @@ const Profile = () => {
 
                     <div className="space-y-2">
                       <Label htmlFor="year">Year of Study</Label>
-                      <Select value={profile.year_of_study?.toString() || ''} onValueChange={(value) => setProfile({...profile, year_of_study: parseInt(value)})}>
+                      <Select value={profile.yearOfStudy?.toString() || ''} onValueChange={(value) => setProfile({...profile, yearOfStudy: parseInt(value)})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select year" />
                         </SelectTrigger>
@@ -323,8 +370,8 @@ const Profile = () => {
                           id="github"
                           placeholder="your-username"
                           className="pl-10"
-                          value={profile.github_username || ''}
-                          onChange={(e) => setProfile({...profile, github_username: e.target.value})}
+                          value={profile.githubUsername || ''}
+                          onChange={(e) => setProfile({...profile, githubUsername: e.target.value})}
                         />
                       </div>
                     </div>
@@ -337,8 +384,8 @@ const Profile = () => {
                           id="linkedin"
                           placeholder="https://linkedin.com/in/yourprofile"
                           className="pl-10"
-                          value={profile.linkedin_url || ''}
-                          onChange={(e) => setProfile({...profile, linkedin_url: e.target.value})}
+                          value={profile.linkedinUrl || ''}
+                          onChange={(e) => setProfile({...profile, linkedinUrl: e.target.value})}
                         />
                       </div>
                     </div>
@@ -382,7 +429,7 @@ const Profile = () => {
                       <Button onClick={addInterest} variant="outline">Add</Button>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {profile.career_interests?.map((interest, index) => (
+                      {profile.careerInterests?.map((interest, index) => (
                         <Badge key={index} variant="outline" className="cursor-pointer" onClick={() => removeInterest(interest)}>
                           {interest} ×
                         </Badge>
@@ -454,14 +501,14 @@ const Profile = () => {
                       <Input
                         id="companyWebsite"
                         placeholder="https://yourcompany.com"
-                        value={profile.company_website || ''}
-                        onChange={(e) => setProfile({...profile, company_website: e.target.value})}
+                        value={profile.companyWebsite || ''}
+                        onChange={(e) => setProfile({...profile, companyWebsite: e.target.value})}
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="companySize">Company Size</Label>
-                      <Select value={profile.company_size || ''} onValueChange={(value) => setProfile({...profile, company_size: value})}>
+                      <Select value={profile.companySize || ''} onValueChange={(value) => setProfile({...profile, companySize: value})}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select company size" />
                         </SelectTrigger>
@@ -495,8 +542,8 @@ const Profile = () => {
                         id="linkedin"
                         placeholder="https://linkedin.com/in/yourprofile"
                         className="pl-10"
-                        value={profile.linkedin_url || ''}
-                        onChange={(e) => setProfile({...profile, linkedin_url: e.target.value})}
+                        value={profile.linkedinUrl || ''}
+                        onChange={(e) => setProfile({...profile, linkedinUrl: e.target.value})}
                       />
                     </div>
                   </div>
@@ -539,9 +586,9 @@ const Profile = () => {
               </div>
               
               <UserAnalytics 
-                userId={user.id}
+                userId={user.id.toString()}
                 skills={profile.skills}
-                careerInterests={profile.career_interests}
+                careerInterests={profile.careerInterests}
                 points={profile.points}
                 level={profile.level}
               />

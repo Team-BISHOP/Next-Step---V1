@@ -1,16 +1,51 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Brain, User, BarChart3, LogOut, GraduationCap, Briefcase, Search, BookOpen, Trophy, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import API from "@/lib/api";
 
 const Header = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+
+  // Fetch user's avatar when user is available
+  useEffect(() => {
+    const fetchUserAvatar = async () => {
+      if (user) {
+        try {
+          const response = await API.get('/Profiles/me');
+          if (response.success && response.data) {
+            const profileData = response.data as { avatarUrl?: string };
+            if (profileData.avatarUrl) {
+              setUserAvatar(profileData.avatarUrl);
+            }
+          }
+        } catch (error) {
+          // Silently fail - avatar is optional
+          console.log('Could not fetch user avatar:', error);
+        }
+      }
+    };
+
+    fetchUserAvatar();
+
+    // Listen for avatar updates from other components
+    const handleAvatarUpdate = (event: CustomEvent) => {
+      setUserAvatar(event.detail.avatarUrl);
+    };
+
+    window.addEventListener('avatarUpdated', handleAvatarUpdate as EventListener);
+
+    return () => {
+      window.removeEventListener('avatarUpdated', handleAvatarUpdate as EventListener);
+    };
+  }, [user]);
 
   // Role-based navigation items
   const getNavItems = () => {
@@ -92,6 +127,7 @@ const Header = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                       <Avatar className="h-10 w-10">
+                        <AvatarImage src={userAvatar || undefined} />
                         <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white">
                           {user.fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
                         </AvatarFallback>
@@ -101,6 +137,7 @@ const Header = () => {
                   <DropdownMenuContent className="w-64" align="end" forceMount>
                     <div className="flex items-center justify-start space-x-2 p-2">
                       <Avatar className="h-8 w-8">
+                        <AvatarImage src={userAvatar || undefined} />
                         <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white text-sm">
                           {user.fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
                         </AvatarFallback>

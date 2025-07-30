@@ -198,41 +198,6 @@ const UserAnalytics = ({ userId, skills = [], careerInterests = [], points = 0, 
         </Card>
       </div>
 
-      {/* Enhanced Skills Proficiency Chart */}
-      {(skills || []).length > 0 && (
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle>Skills Proficiency & Experience</CardTitle>
-            <CardDescription>Your technical skills with proficiency levels and project experience</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={350}>
-              <BarChart data={skillsData} margin={{ bottom: 80 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="name" 
-                  angle={-45} 
-                  textAnchor="end" 
-                  height={80}
-                  fontSize={11}
-                />
-                <YAxis />
-                <Tooltip 
-                  formatter={(value, name) => {
-                    if (name === 'proficiency') return [`${value}%`, 'Proficiency'];
-                    if (name === 'projects') return [value, 'Projects'];
-                    if (name === 'experience') return [`${value} years`, 'Experience'];
-                    return [value, name];
-                  }}
-                />
-                <Bar dataKey="proficiency" fill="hsl(var(--primary))" name="proficiency" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="projects" fill="hsl(var(--secondary))" name="projects" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Enhanced Activity Timeline */}
       <Card className="glass-card">
         <CardHeader>
@@ -295,41 +260,6 @@ const UserAnalytics = ({ userId, skills = [], careerInterests = [], points = 0, 
                     name
                   ]} />
                 </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Enhanced Career Interest Radar */}
-        {(careerInterests || []).length > 0 && (
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle>Career Interest Mapping</CardTitle>
-              <CardDescription>Interest levels based on your skills and activities</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <RadarChart data={careerInterestData}>
-                  <PolarGrid gridType="polygon" />
-                  <PolarAngleAxis dataKey="subject" fontSize={11} />
-                  <PolarRadiusAxis 
-                    angle={30} 
-                    domain={[0, 100]} 
-                    tick={false}
-                  />
-                  <Radar
-                    name="Interest Level"
-                    dataKey="value"
-                    stroke="hsl(var(--primary))"
-                    fill="hsl(var(--primary))"
-                    fillOpacity={0.3}
-                    strokeWidth={2}
-                  />
-                  <Tooltip 
-                    formatter={(value) => [`${value}%`, 'Interest Level']}
-                    labelFormatter={(label) => `Field: ${label}`}
-                  />
-                </RadarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>

@@ -96,6 +96,14 @@ const Profile = () => {
       if (response.success) {
         console.log('Setting profile data:', response.data);
         setProfile(response.data);
+        
+        // Notify Header component about avatar if present
+        const profileData = response.data as { avatarUrl?: string };
+        if (profileData.avatarUrl) {
+          window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+            detail: { avatarUrl: profileData.avatarUrl } 
+          }));
+        }
       } else {
         console.error('Fetch profile failed:', response);
         toast.error("Error loading profile: " + (response.message || 'Unknown error'));
@@ -131,6 +139,13 @@ const Profile = () => {
       
       if (response.success) {
         toast.success("Profile updated successfully!");
+        
+        // Notify Header component about avatar change if avatar is present
+        if (profileToSend.avatarUrl) {
+          window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+            detail: { avatarUrl: profileToSend.avatarUrl } 
+          }));
+        }
         
         // Redirect to home page after successful save
         setTimeout(() => {
@@ -265,7 +280,13 @@ const Profile = () => {
           <AvatarUpload 
             userId={user.id.toString()}
             currentAvatarUrl={profile.avatarUrl}
-            onAvatarUpdate={(url) => setProfile({...profile, avatarUrl: url})}
+            onAvatarUpdate={(url) => {
+              setProfile({...profile, avatarUrl: url});
+              // Notify Header component about avatar change
+              window.dispatchEvent(new CustomEvent('avatarUpdated', { 
+                detail: { avatarUrl: url } 
+              }));
+            }}
           />
 
           {/* Profile Form */}

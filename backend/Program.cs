@@ -51,7 +51,20 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:8080", "http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins(
+                "http://localhost:8080", 
+                "http://localhost:3000", 
+                "http://localhost:5173",
+                "http://frontend:8080",  // Container-to-container communication
+                "http://nextstep-frontend:8080",  // Container name communication
+                "https://nextstep-frontend.s3.amazonaws.com",  // Your S3 bucket URL
+                "https://nextstep-frontend.s3.us-east-1.amazonaws.com",  // Your S3 bucket URL with region
+                "http://nextstep-frontend.s3-website-us-east-1.amazonaws.com",  // S3 website URL
+                "https://nextstep-frontend.s3-website-us-east-1.amazonaws.com",  // S3 website URL (HTTPS)
+                "https://your-custom-domain.com",  // Replace with your CloudFront or custom domain if applicable
+                "http://44.208.0.103:7010",  // Your EC2 public IP
+                "https://44.208.0.103:7010"  // If using HTTPS
+            )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -111,6 +124,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllers();
 
 // Auto apply pending migrations

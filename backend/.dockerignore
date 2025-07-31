@@ -1,0 +1,37 @@
+# Ignore build artifacts
+bin/
+obj/
+out/
+
+# Ignore development files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore runtime files
+*.exe
+*.dll
+*.pdb
+
+# Ignore logs
+logs/
+*.log
+
+# Ignore database files (will be mounted as volume)
+*.db
+*.db-*
+
+# Ignore IDE files
+.vs/
+.vscode/
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+tmp/
+temp/

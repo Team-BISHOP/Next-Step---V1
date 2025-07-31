@@ -1,4 +1,9 @@
-const API_BASE_URL = "http://localhost:7010/api";
+// Use backend service name for container-to-container communication in Azure
+// Use Vite environment variable if set, otherwise default to backend service name
+const API_BASE_URL = "http://44.208.0.103:7010/api";
+
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('Environment variable VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
 
 interface ApiResponse<T> {
   success: boolean;

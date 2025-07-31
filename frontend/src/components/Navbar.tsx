@@ -1,11 +1,51 @@
 import { Button } from "@/components/ui/button";
-import { Brain, Menu, X } from "lucide-react";
+import { Brain, Menu, X, User, LogOut, GraduationCap, Briefcase } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import API from "@/lib/api";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
+
+  // Fetch user's avatar when user is available
+  useEffect(() => {
+    const fetchUserAvatar = async () => {
+      if (user) {
+        try {
+          const response = await API.get('/Profiles/me');
+          if (response.success && response.data) {
+            const profileData = response.data as { avatarUrl?: string };
+            if (profileData.avatarUrl) {
+              setUserAvatar(profileData.avatarUrl);
+            }
+          }
+        } catch (error) {
+          // Silently fail - avatar is optional
+          console.log('Could not fetch user avatar:', error);
+        }
+      }
+    };
+
+    fetchUserAvatar();
+
+    // Listen for avatar updates from other components
+    const handleAvatarUpdate = (event: CustomEvent) => {
+      setUserAvatar(event.detail.avatarUrl);
+    };
+
+    window.addEventListener('avatarUpdated', handleAvatarUpdate as EventListener);
+
+    return () => {
+      window.removeEventListener('avatarUpdated', handleAvatarUpdate as EventListener);
+    };
+  }, [user]);
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -51,17 +91,86 @@ const Navbar = () => {
                 {item.name}
               </Link>
             ))}
+            
+            {/* Auth Section */}
             <div className="flex items-center space-x-4">
-              <Link to="/auth">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button variant="hero" size="sm">
-                  Get Started
-                </Button>
-              </Link>
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  {/* Role Badge */}
+                  <Badge variant={user.role === 'student' ? 'default' : 'secondary'} className="text-xs">
+                    {user.role === 'student' ? (
+                      <>
+                        <GraduationCap className="w-3 h-3 mr-1" />
+                        Student
+                      </>
+                    ) : (
+                      <>
+                        <Briefcase className="w-3 h-3 mr-1" />
+                        Industry Expert
+                      </>
+                    )}
+                  </Badge>
+
+                  {/* User Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={userAvatar || undefined} />
+                          <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white text-xs">
+                            {user.fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <div className="flex items-center justify-start space-x-2 p-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={userAvatar || undefined} />
+                          <AvatarFallback className="bg-gradient-to-r from-primary to-secondary text-white text-xs">
+                            {user.fullName?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-medium leading-none">{user.fullName}</p>
+                          <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                        </div>
+                      </div>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link to="/profile">
+                          <User className="mr-2 h-4 w-4" />
+                          {user.role === 'student' ? 'My Profile' : 'Company Profile'}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to="/">
+                          <Brain className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={signOut}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              ) : (
+                <>
+                  <Link to="/auth">
+                    <Button variant="ghost" size="sm">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link to="/auth">
+                    <Button variant="hero" size="sm">
+                      Get Started
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -97,16 +206,55 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="pt-4 space-y-2">
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="hero" size="sm" className="w-full">
-                    Get Started
-                  </Button>
-                </Link>
+                {user ? (
+                  <>
+                    {/* Mobile Role Badge */}
+                    <div className="px-2 py-1">
+                      <Badge variant={user.role === 'student' ? 'default' : 'secondary'} className="text-xs">
+                        {user.role === 'student' ? (
+                          <>
+                            <GraduationCap className="w-3 h-3 mr-1" />
+                            Student
+                          </>
+                        ) : (
+                          <>
+                            <Briefcase className="w-3 h-3 mr-1" />
+                            Industry Expert
+                          </>
+                        )}
+                      </Badge>
+                    </div>
+                    <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <User className="mr-2 h-4 w-4" />
+                        {user.role === 'student' ? 'My Profile' : 'Company Profile'}
+                      </Button>
+                    </Link>
+                    <Link to="/" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start">
+                        <Brain className="mr-2 h-4 w-4" />
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Button variant="ghost" size="sm" className="w-full justify-start" onClick={signOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full">
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                      <Button variant="hero" size="sm" className="w-full">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>

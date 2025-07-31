@@ -47,6 +47,59 @@ const Header = () => {
     };
   }, [user]);
 
+  const smoothScrollTo = (top: number = 0) => {
+    // Fallback smooth scrolling for browsers that don't support CSS scroll-behavior
+    if ('scrollBehavior' in document.documentElement.style) {
+      window.scrollTo({
+        top,
+        behavior: 'smooth'
+      });
+    } else {
+      // Polyfill for older browsers
+      const startPosition = window.pageYOffset;
+      const distance = top - startPosition;
+      const duration = 800;
+      let start: number | null = null;
+
+      function step(timestamp: number) {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const percentage = Math.min(progress / duration, 1);
+        
+        // Easing function for smooth animation
+        const ease = 0.5 - Math.cos(percentage * Math.PI) / 2;
+        
+        window.scrollTo(0, startPosition + distance * ease);
+        
+        if (progress < duration) {
+          window.requestAnimationFrame(step);
+        }
+      }
+      
+      window.requestAnimationFrame(step);
+    }
+  };
+
+  const handleLogoClick = () => {
+    // Enhanced smooth scroll to top
+    smoothScrollTo(0);
+    
+    // Close mobile menu if open
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleNavClick = (item: any, e: React.MouseEvent) => {
+    // Handle Dashboard/Home navigation with smooth scroll
+    if (item.href === "/" || item.name === "Dashboard") {
+      e.preventDefault();
+      smoothScrollTo(0);
+    }
+    // For section links (starting with #), let default behavior handle it
+    // For other routes, let default navigation handle it
+  };
+
   // Role-based navigation items
   const getNavItems = () => {
     if (!user) {
@@ -82,8 +135,13 @@ const Header = () => {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center">
+          <div 
+            className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-all duration-300 hover:scale-105 active:scale-95"
+            onClick={handleLogoClick}
+            role="button"
+            aria-label="Go to top of page"
+          >
+            <div className="w-8 h-8 bg-gradient-to-r from-primary to-secondary rounded-lg flex items-center justify-center hover:shadow-lg transition-shadow duration-300">
               <Brain className="w-5 h-5 text-white" />
             </div>
             <span className="text-2xl font-bold gradient-text">NextStep</span>
@@ -95,6 +153,7 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
+                onClick={(e) => handleNavClick(item, e)}
                 className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-1"
               >
                 <item.icon className="w-4 h-4" />
@@ -200,7 +259,10 @@ const Header = () => {
                 key={item.name}
                 href={item.href}
                 className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center space-x-2"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => {
+                  handleNavClick(item, e);
+                  setIsMenuOpen(false);
+                }}
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.name}</span>

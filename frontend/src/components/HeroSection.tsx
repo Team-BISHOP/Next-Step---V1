@@ -9,30 +9,57 @@ const HeroSection = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const smoothScrollToElement = (elementId: string) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      // Get element position accounting for fixed header
+      const headerHeight = 80;
+      const elementPosition = element.offsetTop - headerHeight;
+      
+      if ('scrollBehavior' in document.documentElement.style) {
+        window.scrollTo({
+          top: elementPosition,
+          behavior: 'smooth'
+        });
+      } else {
+        // Polyfill for older browsers
+        const startPosition = window.pageYOffset;
+        const distance = elementPosition - startPosition;
+        const duration = 1000;
+        let start: number | null = null;
+
+        function step(timestamp: number) {
+          if (!start) start = timestamp;
+          const progress = timestamp - start;
+          const percentage = Math.min(progress / duration, 1);
+          
+          // Easing function for smooth animation
+          const ease = 0.5 - Math.cos(percentage * Math.PI) / 2;
+          
+          window.scrollTo(0, startPosition + distance * ease);
+          
+          if (progress < duration) {
+            window.requestAnimationFrame(step);
+          }
+        }
+        
+        window.requestAnimationFrame(step);
+      }
+    }
+  };
+
   const handleStartJourney = () => {
     if (!user) {
       // User not logged in, redirect to login page
       navigate("/auth");
     } else {
       // User is logged in, scroll to career paths section
-      const careerPathsElement = document.getElementById("careers");
-      if (careerPathsElement) {
-        careerPathsElement.scrollIntoView({ 
-          behavior: "smooth",
-          block: "start"
-        });
-      }
+      smoothScrollToElement("careers");
     }
   };
 
   const handleTakeQuiz = () => {
-    const quizElement = document.getElementById("quiz");
-    if (quizElement) {
-      quizElement.scrollIntoView({ 
-        behavior: "smooth",
-        block: "start"
-      });
-    }
+    smoothScrollToElement("quiz");
   };
 
   const stats = [

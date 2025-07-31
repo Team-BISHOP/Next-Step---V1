@@ -10,6 +10,7 @@ import {
   Instagram,
   ExternalLink
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const footerLinks = {
@@ -168,13 +169,13 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center group"
                   >
                     {link.name}
                     <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -185,13 +186,13 @@ const Footer = () => {
             <ul className="space-y-2">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <a 
-                    href={link.href}
+                  <Link 
+                    to={link.href}
                     className="text-muted-foreground hover:text-primary transition-colors duration-300 flex items-center group"
                   >
                     {link.name}
                     <ExternalLink className="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -206,12 +207,12 @@ const Footer = () => {
             </div>
             
             <div className="flex items-center space-x-6 text-sm">
-              <a href="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                 Privacy Policy
-              </a>
-              <a href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+              </Link>
+              <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
                 Terms of Service
-              </a>
+              </Link>
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 Cookie Policy
               </a>

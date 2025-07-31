@@ -118,8 +118,18 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Account for fixed header */
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
+  }
+
+  /* Ensure smooth scrolling works everywhere */
+  *, *::before, *::after {
+    scroll-behavior: smooth;
   }
 }
 
@@ -355,7 +365,7 @@
   line-clamp: 3;
 }
 
-/* Hide scrollbars */
+/* Hide scrollbars while maintaining smooth scrolling */
 * {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -369,9 +379,17 @@
 html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  scroll-behavior: smooth !important; /* Force smooth scrolling */
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
+}
+
+/* Additional smooth scrolling support */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth !important;
+  }
 }

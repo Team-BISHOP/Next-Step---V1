@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -85,6 +85,32 @@ const CareerPathsSection = () => {
       projects: 22
     }
   ];
+
+  // Listen for career path selection events from AI Quiz
+  useEffect(() => {
+    const handleCareerPathSelection = (event: any) => {
+      const { careerIndex, openLearningPath } = event.detail;
+      console.log('Career path selection event received:', { careerIndex, openLearningPath });
+      
+      // Set the selected career path
+      setSelectedPath(careerIndex);
+      
+      // Open learning path if requested
+      if (openLearningPath) {
+        setTimeout(() => {
+          setShowLearningPath(true);
+        }, 500); // Small delay to ensure path selection is visible
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('selectCareerPath', handleCareerPathSelection);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('selectCareerPath', handleCareerPathSelection);
+    };
+  }, []);
 
   return (
     <section id="careers" className="py-20 relative">

@@ -1,11 +1,9 @@
 // Use backend service name for container-to-container communication in Azure
 // Use Vite environment variable if set, otherwise default to backend service name
-const API_BASE_URL =
-  (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BACKEND_URL)
-    ? `${import.meta.env.VITE_BACKEND_URL}/api`
-    : typeof window !== 'undefined' 
-      ? "http://44.208.0.103:7010/api"  // Your EC2 public IP for browser requests
-      : "http://backend:7010/api";  // Container-to-container communication
+const API_BASE_URL = "http://44.208.0.103:7010/api";
+
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('Environment variable VITE_BACKEND_URL:', import.meta.env.VITE_BACKEND_URL);
 
 interface ApiResponse<T> {
   success: boolean;

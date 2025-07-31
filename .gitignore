@@ -301,10 +301,6 @@ logs
 # Heroku
 .env.local
 
-# Docker
-.dockerignore
-Dockerfile*
-docker-compose*
 
 # ============================================
 # TEMPORARY & CACHE FILES

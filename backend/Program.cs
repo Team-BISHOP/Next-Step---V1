@@ -56,7 +56,12 @@ builder.Services.AddCors(options =>
                 "http://localhost:3000", 
                 "http://localhost:5173",
                 "http://frontend:8080",  // Container-to-container communication
-                "http://nextstep-frontend:8080"  // Container name communication
+                "http://nextstep-frontend:8080",  // Container name communication
+                "https://nextstep-frontend.s3.amazonaws.com",  // Your S3 bucket URL
+                "https://nextstep-frontend.s3.us-east-1.amazonaws.com",  // Your S3 bucket URL with region
+                "https://your-custom-domain.com",  // Replace with your CloudFront or custom domain if applicable
+                "http://44.208.0.103:7010",  // Your EC2 public IP
+                "https://44.208.0.103:7010"  // If using HTTPS
             )
               .AllowAnyHeader()
               .AllowAnyMethod()

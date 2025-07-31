@@ -3,7 +3,9 @@
 const API_BASE_URL =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_BACKEND_URL)
     ? `${import.meta.env.VITE_BACKEND_URL}/api`
-    : "http://backend:7010/api";
+    : typeof window !== 'undefined' 
+      ? "http://44.208.0.103:7010/api"  // Your EC2 public IP for browser requests
+      : "http://backend:7010/api";  // Container-to-container communication
 
 interface ApiResponse<T> {
   success: boolean;

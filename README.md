@@ -121,6 +121,17 @@ npm run dev
 3. Login with your credentials
 4. Explore the platform!
 
+### 5. Deployment Overview
+#### 💠 What Each Environment Uses:
+
+| **Environment**     | **Web Server**         | **Config File**                | **Status**     |
+|---------------------|------------------------|--------------------------------|----------------|
+| S3 Deployment       | AWS S3 Static Hosting  | `S3 website config`            | ✅ Working     |
+| Docker Compose      | nginx                  | 🟩 `nginx.conf`                 | ✅ Now Fixed   |
+| Local Dev           | Vite dev server        | ⚡ `vite.config.ts`             | ✅ Working     |
+
+
+
 ## 🔧 Development Setup
 
 ### Environment Variables

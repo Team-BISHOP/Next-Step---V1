@@ -1,6 +1,7 @@
 # 🚀 NextStep Docker Quick Start
 
 ## Overview
+
 Your NextStep application has been successfully dockerized! This setup provides:
 
 - **Backend**: .NET 9.0 API (Port 7010)
@@ -12,16 +13,19 @@ Your NextStep application has been successfully dockerized! This setup provides:
 ## 🏃‍♂️ Quick Start
 
 ### Option 1: PowerShell (Windows)
+
 ```powershell
 .\deploy.ps1
 ```
 
 ### Option 2: Docker Compose (Any OS)
+
 ```bash
 docker-compose up -d
 ```
 
 ### Option 3: Production Mode
+
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ```
@@ -35,6 +39,7 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ## 📁 Files Created
 
 ### Docker Files
+
 - `backend/Dockerfile` - Backend container configuration
 - `frontend/Dockerfile` - Frontend container configuration
 - `frontend/nginx.conf` - Nginx configuration for frontend
@@ -42,11 +47,13 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 - `docker-compose.prod.yml` - Production overrides
 
 ### Configuration
+
 - `backend/appsettings.Production.json` - Production backend config
 - `.env.example` - Environment variables template
 - `backend/.dockerignore` & `frontend/.dockerignore` - Build optimization
 
 ### Scripts & Documentation
+
 - `deploy.ps1` - PowerShell deployment script
 - `deploy.sh` - Bash deployment script
 - `DOCKER-DEPLOYMENT.md` - Comprehensive deployment guide
@@ -54,17 +61,20 @@ docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 ## 🔧 Key Features
 
 ### Container Communication
+
 - Services communicate using internal network (`nextstep-network`)
 - Frontend connects to backend via `http://backend:7010`
 - No localhost dependencies between containers
 
 ### Security
+
 - Non-root user execution
 - Proper CORS configuration
 - Security headers in Nginx
 - Resource limits in production
 
 ### Cloud Deployment Ready
+
 - Works seamlessly with AWS ECS, Azure Container Apps, Kubernetes
 - Environment variable based configuration
 - Health checks for orchestration platforms
@@ -94,8 +104,9 @@ docker-compose up -d
 ## 🌩️ Cloud Deployment
 
 The application is cloud-ready! See `DOCKER-DEPLOYMENT.md` for detailed instructions on deploying to:
+
 - AWS ECS
-- Azure Container Apps  
+- Azure Container Apps
 - Kubernetes
 - Any container orchestration platform
 

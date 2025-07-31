@@ -1,12 +1,14 @@
 # NextStep Docker Deployment Guide
 
 ## Overview
+
 This guide provides instructions for deploying the NextStep full-stack application using Docker containers. The application consists of:
 
 - **Backend**: .NET 9.0 API running on port 7010
 - **Frontend**: React/Vite application running on port 8080 with Nginx
 
 ## Prerequisites
+
 - Docker Engine 20.10+
 - Docker Compose 2.0+
 - At least 2GB RAM available
@@ -15,6 +17,7 @@ This guide provides instructions for deploying the NextStep full-stack applicati
 ## Quick Start
 
 ### 1. Local Development
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -31,6 +34,7 @@ docker-compose down
 ```
 
 ### 2. Production Deployment
+
 ```bash
 # Using production configuration
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
@@ -44,13 +48,15 @@ docker-compose --env-file .env up -d
 ## Architecture
 
 ### Container Communication
+
 - **Internal Network**: Services communicate using service names (`backend`, `frontend`)
-- **External Access**: 
+- **External Access**:
   - Frontend: http://localhost:8080
   - Backend API: http://localhost:7010
   - Backend Swagger: http://localhost:7010/swagger
 
 ### Security Features
+
 - Non-root user execution in both containers
 - Security headers in Nginx
 - CORS properly configured for container communication
@@ -58,23 +64,27 @@ docker-compose --env-file .env up -d
 - Resource limits in production
 
 ### Data Persistence
+
 - SQLite database persisted using Docker volume `backend_data`
 - Database location: `/app/data/nextstep.db` inside container
 
 ## Environment Variables
 
 ### Backend
+
 - `ASPNETCORE_ENVIRONMENT`: Application environment (Production/Development)
 - `ConnectionStrings__DefaultConnection`: Database connection string
 - `JwtSettings__SecretKey`: JWT signing key (change for production)
 - `AppSettings__BaseUrl`: Backend base URL for internal communication
 
 ### Frontend
+
 - `VITE_BACKEND_URL`: Backend API URL for frontend communication
 
 ## Cloud Deployment
 
 ### AWS ECS
+
 ```bash
 # Build and push images to ECR
 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
@@ -88,6 +98,7 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/nextstep-frontend:lates
 ```
 
 ### Azure Container Apps
+
 ```bash
 # Build and push to Azure Container Registry
 az acr build --registry <registry-name> --image nextstep-backend:latest ./backend
@@ -95,6 +106,7 @@ az acr build --registry <registry-name> --image nextstep-frontend:latest ./front
 ```
 
 ### Kubernetes
+
 ```bash
 # Generate Kubernetes manifests from docker-compose
 kompose convert -f docker-compose.yml -f docker-compose.prod.yml
@@ -103,10 +115,12 @@ kompose convert -f docker-compose.yml -f docker-compose.prod.yml
 ## Monitoring and Health Checks
 
 ### Health Endpoints
+
 - Backend: `GET /health`
 - Frontend: Nginx serves on port 8080
 
 ### Logs
+
 ```bash
 # View all logs
 docker-compose logs
@@ -120,6 +134,7 @@ docker-compose logs -f backend
 ```
 
 ### Resource Monitoring
+
 ```bash
 # View resource usage
 docker stats
@@ -133,6 +148,7 @@ docker-compose ps
 ### Common Issues
 
 1. **Port Conflicts**
+
    ```bash
    # Check if ports are in use
    netstat -tulpn | grep :7010
@@ -140,16 +156,18 @@ docker-compose ps
    ```
 
 2. **Database Connection Issues**
+
    ```bash
    # Check volume mount
    docker volume inspect nextstep_backend_data
-   
+
    # Access backend container
    docker-compose exec backend bash
    ls -la /app/data/
    ```
 
 3. **CORS Issues**
+
    - Ensure frontend uses correct backend URL (`http://backend:7010`)
    - Check CORS configuration in Program.cs
 
@@ -160,6 +178,7 @@ docker-compose ps
    ```
 
 ### Development Tips
+
 ```bash
 # Rebuild containers after code changes
 docker-compose build
@@ -173,18 +192,21 @@ docker system prune -a
 ## Production Considerations
 
 ### Security
+
 - Change JWT secret key
 - Use HTTPS in production
 - Configure proper firewall rules
 - Regular security updates
 
 ### Performance
+
 - Configure nginx worker processes based on CPU cores
 - Enable gzip compression (already configured)
 - Use CDN for static assets
 - Monitor container resources
 
 ### Backup
+
 ```bash
 # Backup database volume
 docker run --rm -v nextstep_backend_data:/data -v $(pwd):/backup alpine tar czf /backup/database-backup.tar.gz -C /data .
@@ -194,4 +216,5 @@ docker run --rm -v nextstep_backend_data:/data -v $(pwd):/backup alpine tar xzf 
 ```
 
 ## Support
+
 For issues or questions, please refer to the project documentation or create an issue in the repository.

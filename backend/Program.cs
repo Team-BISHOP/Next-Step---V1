@@ -51,7 +51,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:8080", "http://localhost:3000", "http://localhost:5173")
+        policy.WithOrigins(
+                "http://localhost:8080", 
+                "http://localhost:3000", 
+                "http://localhost:5173",
+                "http://frontend:8080",  // Container-to-container communication
+                "http://nextstep-frontend:8080"  // Container name communication
+            )
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -111,6 +117,10 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Add health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+
 app.MapControllers();
 
 // Auto apply pending migrations
